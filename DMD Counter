@@ -1,0 +1,59 @@
+/*
+  Countdown on a single DMD display
+ */
+
+#include <SPI.h>
+#include <DMD2.h>
+#include <fonts/Droid_Sans_12.h>
+
+
+const int  buttonPin = 2;
+int buttonPushCounter = 0;   // counter for the number of button presses
+int buttonState = 0;         // current state of the button
+int lastButtonState = 0;     // previous state of the button
+
+SoftDMD dmd(1,1);  // DMD controls the entire display
+DMD_TextBox box(dmd, 1, 2);  // "box" provides a text box to automatically write to/scroll the display
+
+// the setup routine runs once when you press reset:
+void setup() {
+  Serial.begin(9600);
+  dmd.setBrightness(200);
+  dmd.selectFont(Droid_Sans_12);
+  dmd.begin();
+  dmd.clearScreen();
+  dmd.drawCircle(15,8,5);
+  delay(3000);
+  box.println(F("  "));
+  dmd.clearScreen();
+  box.print(buttonPushCounter);
+  box.println(F("  "));
+ }
+
+// the loop routine runs over and over again forever:
+void loop() {
+
+ if (buttonPushCounter == 9999){
+
+  buttonPushCounter = 0;
+ }
+
+  buttonState = digitalRead(buttonPin);
+
+if (buttonState != lastButtonState) {
+    
+    if (buttonState == HIGH) {
+  buttonPushCounter++; 
+  dmd.clearScreen();
+  box.print(buttonPushCounter);
+  box.println(F(""));
+   
+    
+  }
+  
+     }
+  lastButtonState = buttonState;
+  
+      delay(50);
+    
+}

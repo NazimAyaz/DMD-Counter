@@ -1,0 +1,79 @@
+/*
+  Tek DMD display ile 2 buton yukarı sayıcı
+ */
+
+#include <SPI.h>
+#include <DMD2.h>
+#include <fonts/Droid_Sans_12.h>
+
+
+const int  buttonPin1 = 2; //Buton 1
+const int  buttonPin2 = 3; //Buton 2
+int buttonPushCounter = 0;   // Buton counter variable
+int buttonState1 = 0;         // 1 nolu güncel buton durumu
+int lastButtonState1 = 0;     // 1 nolu butonun bir önceki durumu
+int buttonState2 = 0;         // 2 nolu güncel buton durumu
+int lastButtonState2 = 0;     // 2 nolu butonun bir önceki durumu
+
+SoftDMD dmd(1,1);  // DMD controls the entire display
+DMD_TextBox box(dmd, 1, 2);  // "box" provides a text box to automatically write to/scroll the display
+
+// resetlendiğinde çalışacak rutin:
+void setup() {
+  Serial.begin(9600);
+  dmd.setBrightness(200);
+  dmd.selectFont(Droid_Sans_12);
+  dmd.begin();
+  dmd.clearScreen();
+  dmd.drawCircle(15,8,5);
+  delay(3000);
+  box.println(F("  "));
+  dmd.clearScreen();
+  box.print(buttonPushCounter);
+  box.println(F("  "));
+ }
+
+// sürekli tekrarlanacak kod:
+void loop() {
+
+ if (buttonPushCounter == 9999){
+
+  buttonPushCounter = 0;
+ }
+//-------------------------------------------------------
+  buttonState1 = digitalRead(buttonPin1);
+
+if (buttonState1 != lastButtonState1) {
+    
+    if (buttonState1 == HIGH) {
+  buttonPushCounter++; 
+  dmd.clearScreen();
+  box.print(buttonPushCounter);
+  box.println(F(""));
+       
+  }
+     }
+//-------------------------------------------------------
+  buttonState2 = digitalRead(buttonPin2);
+
+if (buttonState2 != lastButtonState2) {
+    
+    if (buttonState2 == HIGH) {
+  buttonPushCounter++; 
+  dmd.clearScreen();
+  box.print(buttonPushCounter);
+  box.println(F(""));
+       
+  }
+     }
+     
+
+//--------------------------------------------------------
+
+     
+  lastButtonState1 = buttonState1;
+  lastButtonState2 = buttonState2;
+  
+      delay(50);
+    
+}
